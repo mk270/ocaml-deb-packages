@@ -3,7 +3,9 @@ let status_filename = "/var/lib/dpkg/status"
 
 type debpkg = {
 	name : string;
+	status : string;
 	attributes : (string * string) list;
+
 }
 
 type t = debpkg list
@@ -75,9 +77,41 @@ let kvps_of_pkglines pkglines =
 	in
 		get_relevant [] (List.map kvp pkglines)
 			
+exception Missing_field of (string * string)
+exception Invalid_field of (string * string)
+
 let make_package pkg_kvps =
 	let name = List.assoc "Package" pkg_kvps in
+
+	let permitted_fields = [
+		"Provides"; "Original-Maintainer"; "Depends"; "Installed-Size";
+		"Maintainer"; "Version"; "Description"; "Homepage";
+		"Source"; "Config-Version"; "Multi-Arch"; "Pre-Depends";
+		"Replaces"; "Breaks"; "Suggests"; "Conflicts"; "Python-Version";
+		"Conffiles"; "Recommends"; "Essential"; "Ruby-Versions";
+		"Gstreamer-Decoders"; "Gstreamer-Elements"; "Gstreamer-Version";
+		"Gstreamer-Encoders"; "Gstreamer-Uri-Sinks"; "Gstreamer-Uri-Sources";
+		"Enhances"; "Built-Using"; "Origin"; "Bugs";
+		"Orig-Maintainer"; "Npp-Applications"; "Npp-Description";
+		"Npp-File"; "Npp-Mimetype"; "Npp-Name"; "Xul-Appid";
+	] and required_fields = [
+		"Package"; "Status"; "Priority"; "Section";  
+		"Architecture"; ] in
+	let all_fields = permitted_fields @ required_fields in
+	let used_fields = List.map fst pkg_kvps in
+		List.iter (fun i -> 
+			if not (List.mem_assoc i pkg_kvps)
+			then raise (Missing_field (name, i))
+			else ())  required_fields;
+
+		List.iter (fun i ->
+			if not (List.mem i all_fields)
+			then raise (Invalid_field (name, i))
+			else ()) used_fields;
+
+	let status = List.assoc "Status" pkg_kvps in
 		{ name = name;
+		  status = status;
 		  attributes = pkg_kvps }
 			
 let init () =
