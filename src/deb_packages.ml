@@ -17,9 +17,11 @@ type package_state =
 	| Triggers_pending
 	| Installed
 
+type status = selection_state * package_state
+
 type debpkg = {
 	name : string;
-	status : string;
+	status : status;
 	attributes : (string * string) list;
 
 }
@@ -49,6 +51,16 @@ let package_state_of_string = function
 	| "triggers-pending" -> Triggers_pending
 	| "installed" -> Installed
 	| s -> failwith ("Unknown package state: " ^ s)
+
+let string_of_package_state = function
+	| Not_installed -> "not-installed"
+	| Config_files -> "config-files"
+	| Half_installed -> "half-installed"
+	| Unpacked -> "unpacked"
+	| Half_configured -> "half-configured"
+	| Triggers_awaited -> "triggers-awaited"
+	| Triggers_pending -> "triggers-pending"
+	| Installed -> "installed"
 
 let load_file f =
 	let ic = open_in f in
@@ -120,15 +132,14 @@ let kvps_of_pkglines pkglines =
 exception Missing_field of (string * string)
 exception Invalid_field of (string * string)
 
-(*
 let parse_status s =
 	let rx = Str.regexp " " in
-	let words = Str.split rx s 3 in
+	let words = Str.bounded_split rx s 3 in
 		match words with
 		| selection_state :: "ok" :: package_state :: [] ->
 			(selection_state_of_string selection_state,
 			 package_state_of_string package_state)
-		| _ -> assert false *)
+		| _ -> assert false
 
 let make_package pkg_kvps =
 	let name = List.assoc "Package" pkg_kvps in
@@ -159,7 +170,8 @@ let make_package pkg_kvps =
 			then raise (Invalid_field (name, i))
 			else ()) used_fields;
 
-	let status = List.assoc "Status" pkg_kvps in
+	let status_codes = List.assoc "Status" pkg_kvps in
+	let status = parse_status status_codes in
 		{ name = name;
 		  status = status;
 		  attributes = pkg_kvps }

@@ -2,9 +2,12 @@
 let dump_packages () =
 	let print_pkg_info pkg =
 		let name = Deb_packages.package_name pkg 
-		and status = Deb_packages.package_status pkg
+		and selection_state, package_state = Deb_packages.package_status pkg
+		in 
+		let ss = Deb_packages.string_of_selection_state selection_state
+		and ps = Deb_packages.string_of_package_state package_state
 		in
-			Printf.printf "%s %s\n" name status
+			Printf.printf "%s %s %s\n" name ss ps
 	in
 		Deb_packages.init () |>
 		List.iter print_pkg_info
