@@ -7,6 +7,16 @@ type selection_state =
 	| Deinstall
 	| Purge
 
+type package_state =
+	| Not_installed
+	| Config_files
+	| Half_installed
+	| Unpacked
+	| Half_configured
+	| Triggers_awaited
+	| Triggers_pending
+	| Installed
+
 type debpkg = {
 	name : string;
 	status : string;
@@ -15,6 +25,30 @@ type debpkg = {
 }
 
 type t = debpkg list
+
+let selection_state_of_string = function
+	| "install" -> Install
+	| "deinstall" -> Deinstall
+	| "hold" -> Hold
+	| "purge" -> Purge
+	| s -> failwith ("Unknown selection state: " ^ s)
+
+let string_of_selection_state = function
+	| Install -> "install"
+	| Deinstall -> "deinstall"
+	| Hold -> "hold"
+	| Purge -> "purge"
+
+let package_state_of_string = function
+	| "not-installed" -> Not_installed
+	| "config-files" -> Config_files
+	| "half-installed" -> Half_installed
+	| "unpacked" -> Unpacked
+	| "half-configured" -> Half_configured
+	| "triggers-awaited" -> Triggers_awaited
+	| "triggers-pending" -> Triggers_pending
+	| "installed" -> Installed
+	| s -> failwith ("Unknown package state: " ^ s)
 
 let load_file f =
 	let ic = open_in f in
@@ -85,6 +119,16 @@ let kvps_of_pkglines pkglines =
 			
 exception Missing_field of (string * string)
 exception Invalid_field of (string * string)
+
+(*
+let parse_status s =
+	let rx = Str.regexp " " in
+	let words = Str.split rx s 3 in
+		match words with
+		| selection_state :: "ok" :: package_state :: [] ->
+			(selection_state_of_string selection_state,
+			 package_state_of_string package_state)
+		| _ -> assert false *)
 
 let make_package pkg_kvps =
 	let name = List.assoc "Package" pkg_kvps in

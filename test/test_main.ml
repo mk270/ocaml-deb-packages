@@ -4,7 +4,7 @@ let dump_packages () =
 		let name = Deb_packages.package_name pkg 
 		and status = Deb_packages.package_status pkg
 		in
-			Printf.printf "%s\n"  status
+			Printf.printf "%s %s\n" name status
 	in
 		Deb_packages.init () |>
 		List.iter print_pkg_info

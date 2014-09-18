@@ -5,6 +5,16 @@ type selection_state =
 	| Deinstall
 	| Purge
 
+type package_state =
+	| Not_installed
+	| Config_files
+	| Half_installed
+	| Unpacked
+	| Half_configured
+	| Triggers_awaited
+	| Triggers_pending
+	| Installed
+
 type debpkg
 type t = debpkg list
 
