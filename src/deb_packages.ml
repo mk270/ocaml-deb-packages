@@ -83,9 +83,9 @@ let make_package pkg_kvps =
 let init () =
 	let data = load_file status_filename in
 		pkginfo_indices data |>
-				pkgstrings data |>
-						List.map lines_of_pkginfo |>
-								List.map kvps_of_pkglines |>
-										List.map make_package
+		pkgstrings data |>
+		List.map lines_of_pkginfo |>
+		List.map kvps_of_pkglines |>
+		List.map make_package
 										
 let package_name p = p.name
