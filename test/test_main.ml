@@ -1,8 +1,10 @@
 
 let dump_packages () =
+	let print_pkg_info pkg =
+		print_endline (Deb_packages.package_name pkg)
+	in
 	let pkgs = Deb_packages.init () in
-		List.iter (fun pkg ->
-			print_endline (Deb_packages.package_name pkg)) pkgs
+		List.iter print_pkg_info pkgs
 
 let () =
 	try dump_packages ()
