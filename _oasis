@@ -1,0 +1,13 @@
+OASISFormat: 0.3
+Name:        deb-packages
+Version:     0.1
+Synopsis:    A library for reporting the state of Debian packages on a system
+Authors:     Martin Keegan
+License:     Apache-2.0
+Plugins:     META (0.3)
+
+Library deb_packages
+  Path:       src
+  BuildTools: ocamlbuild
+  Modules:    Deb_packages
+  
