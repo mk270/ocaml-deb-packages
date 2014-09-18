@@ -1,6 +1,12 @@
 
 let status_filename = "/var/lib/dpkg/status"
 
+type selection_state =
+	| Install
+	| Hold
+	| Deinstall
+	| Purge
+
 type debpkg = {
 	name : string;
 	status : string;

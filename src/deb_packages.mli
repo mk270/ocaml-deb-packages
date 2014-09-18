@@ -1,4 +1,10 @@
 
+type selection_state =
+	| Install
+	| Hold
+	| Deinstall
+	| Purge
+
 type debpkg
 type t = debpkg list
 
