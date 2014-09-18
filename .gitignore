@@ -1,3 +1,12 @@
 *.cmo
 *.cmi
 a.out
+_build/
+setup.data
+setup.log
+setup.ml
+*.mllib
+_tags
+*.byte
+myocamlbuild.ml
+src/META
