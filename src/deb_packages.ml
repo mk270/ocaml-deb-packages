@@ -123,3 +123,4 @@ let init () =
 		List.map make_package
 										
 let package_name p = p.name
+let package_status p = p.status

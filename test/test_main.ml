@@ -1,9 +1,11 @@
 
+let dump_packages () =
+	let pkgs = Deb_packages.init () in
+		List.iter (fun pkg ->
+			print_endline (Deb_packages.package_name pkg)) pkgs
+
 let () =
-	try
-		let pkgs = Deb_packages.init () in
-			List.iter (fun pkg ->
-				print_endline (Deb_packages.package_name pkg)) pkgs
+	try dump_packages ()
 	with 
 	| Deb_packages.Missing_field (pkg, field) as e ->
 		Printf.printf "Missing field: pkg: %s, field name: %s\n" pkg field;
