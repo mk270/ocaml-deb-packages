@@ -11,3 +11,9 @@ Library deb_packages
   BuildTools: ocamlbuild
   Modules:    Deb_packages
   
+
+Executable test_deb_packages
+  Path:	      test
+  BuildTools: ocamlbuild
+  MainIs:     test_main.ml
+  BuildDepends:  str, deb_packages
